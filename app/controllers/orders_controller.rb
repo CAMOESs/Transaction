@@ -4,9 +4,11 @@ class OrdersController < ApplicationController
   end
 
   def new
-    @order = Order.new
-    @order.ordered_lists.build
-    @items = Item.all.order(:created_at)
+    ActiveRecord::Base.transaction do
+      @order = Order.new
+      @order.ordered_lists.lock.build
+      @items = Item.all.order(:created_at)
+    end
   end
 
   def create
