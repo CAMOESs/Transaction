@@ -10,5 +10,10 @@ class Order < ApplicationRecord
       item.total_quantity += line_item.quantity
       item.save!
     end
+    ActiveRecord::Base.transaction do
+      @order = Order.new
+      @order.ordered_lists.lock.build
+      @items = Item.all.order(:created_at)
+    end
   end
 end
